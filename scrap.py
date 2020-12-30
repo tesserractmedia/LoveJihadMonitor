@@ -25,7 +25,7 @@ def scrap(cases,month = str(datetime.now().month),year = str(datetime.now().year
         articles = list(soup.find_all("div",attrs = {"class" : ["tdb_module_loop","td_module_wrap","td-animation-stack"]},partial=False))
         for article in articles:
             title = str(article.div.h3.a.text)
-            if "Jihad" in title and "Grooming" in title or "Love" in title:
+            if "Jihad" in title and ("Grooming" in title or "Love" in title):
                 a = {}
                 try:
                     a["title"] = title
