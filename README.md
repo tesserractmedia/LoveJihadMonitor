@@ -1,4 +1,4 @@
-# LoveJihadMonitor
+#WebScrapper
 This is a small web scrapper.
 This web scrapper scraps keywords love,jihad,grooming
 This scrapper produces two files.
