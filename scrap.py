@@ -20,14 +20,14 @@ def scrap(cases, month=str(datetime.now().month), year=str(datetime.now().year))
         except:
             print("Error opening", source["OpIndia"]+year+"/"+month+"/")
             file.write("PageError "+source["OpIndia"]+year+"/"+month+"/\n")
-            return
+            exit(-1)
         soup = BeautifulSoup(r.content, "html.parser")
         try:
             count = soup.find("span", attrs={"class": "pages"}).text.split()
         except:
             print("Error:Corrupted page!")
             file.write("PageError "+source["OpIndia"]+year+"/"+month+"/\n")
-            return
+            exit(-1)
         count = int(count[-1])
         print("Total pages :", count)
         print("Total estimated time :", count/10, " minutes")
@@ -55,7 +55,7 @@ def scrap(cases, month=str(datetime.now().month), year=str(datetime.now().year))
                 if "Jihad" in title and ("Grooming" in title or "Love" in title):
                     a = {}
                     try:
-                        a["title"] = title
+                        a["title"] = title.encode('ascii',errors='ignore').decode("ascii",errors='ignore')
                         print(title)
                         a["link"] = article.div.h3.a["href"]
                         a["date"] = {}
@@ -83,7 +83,7 @@ def process(year, month, cases):
                 a.download()
                 a.parse()
                 a.nlp()
-                cases[i]["summary"] = a.summary.replace("\n", ' ')
+                cases[i]["summary"] = a.summary.replace("\n", ' ').encode('ascii',errors='ignore').decode("ascii",errors='ignore')
                 print(i+1, " cases processed")
                 time.sleep(3)
             except:
@@ -101,12 +101,21 @@ def process(year, month, cases):
                     file.write(cases[i]["link"]+"\n")
                 except:
                     file.write("LinkError\n")
+                try:
+                    if "summary" in cases[i].keys():
+                        pass
+                    else:
+                        file.write("SummaryError\n")
+                except:
+                    file.write("SummaryError\n")
+
 
 
 def work(year=None, month=None):
     if year is None or month is None:
         year = int(input("Enter the year :"))
         month = int(input("Enter the month :"))
+    print("Scraping",year,month)
     data = {}
     data["date"] = {}
     data["date"]["month"] = month
